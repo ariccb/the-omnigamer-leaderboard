@@ -1,0 +1,14 @@
+{
+  "name": "the-omnigamer-leaderboard",
+  "version": "1.0.0",
+  "description": "a leaderboard that can track you and your friends games across all games, sports, competitions and provide an \"overall\" leader in each category and overall.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aric Crosson Bouwers",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
