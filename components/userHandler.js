@@ -1,5 +1,6 @@
 import express from "express";
-import { deleteUser, updateUser, addUser, getAllUsers } from "./userData.js";
+import { supabase } from "../supabase.js";
+import { deleteUser, updateUser, addUser, getAllUsers } from "./userData.js"; // this won't be needed if switching to supabase
 
 export const userHandler = express.Router();
 
@@ -28,3 +29,12 @@ userHandler.delete("/:id", (req, res) => {
 
    res.send(getAllUsers());
 });
+
+const { data, error } = await supabase
+   .from("profiles")
+   .insert([{ username: "ariccb", full_name: "Aric Crosson Bouwers" }]);
+
+console.log(data);
+if (error) {
+   console.log(error);
+}

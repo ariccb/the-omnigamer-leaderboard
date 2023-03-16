@@ -10,7 +10,8 @@ app.get("/", (req, res) => {
    res.send("You reached the home endpoint.\n");
 });
 
-app.use("/users", userHandler);
+app.use("/users", userHandler); // router to users endpoint
+// app.use("/leaderboard", leaderboardHandler); // router to leaderboard endpoint
 
 //port the server is listening on
 app.listen(PORT, () => {
