@@ -8,6 +8,9 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: new Date(),
     },
+    updated_at: {
+        type: Date,
+    },
 });
 
 const UserModel = mongoose.model("users", userSchema);

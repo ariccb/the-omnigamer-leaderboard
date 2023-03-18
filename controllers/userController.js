@@ -44,7 +44,7 @@ export async function createUser(req, res) {
 export async function updateUser(req, res) {
     console.log(`Trying to update a user.`);
     const { _id } = req.params;
-    const { email, username, first_name, last_name } = req.body;
+    const { email, username, first_name, last_name, created_at } = req.body;
 
     console.log(`Attempting to update user with _id: ${_id}`);
 
@@ -58,7 +58,8 @@ export async function updateUser(req, res) {
                 email,
                 username,
                 name: `${first_name} ${last_name}`,
-                created_at: new Date().toISOString(),
+                created_at,
+                updated_at: new Date().toISOString(),
                 _id,
             },
             {
@@ -76,7 +77,45 @@ export async function updateUser(req, res) {
     }
 }
 
-export async function patchUser(req, res) {}
+export async function patchUser(req, res) {
+    console.log(`Trying to patch a user.`);
+    const { _id } = req.params;
+    const userPatch = req.body;
+
+    console.log(`Attempting to update user with _id: ${_id}`);
+
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        return res.status(404).send(`No user found with _id: ${_id}`);
+    }
+    try {
+        console.log("attempting patch user");
+        const updatedUser = await UserModel.findByIdAndUpdate(_id, {
+            ...userPatch,
+            name: req.body.name
+                ? req.body.name
+                : req.body.first_name == undefined
+                ? res.json({
+                      message:
+                          "If updating last_name, provide first_name as well, or update both together using property 'name: first_name last_name'",
+                  })
+                : req.body.last_name == undefined
+                ? res.json({
+                      message:
+                          "If updating first_name, provide last_name as well, or update both together using property 'name: first_name last_name'",
+                  })
+                : `${req.body.first_name} ${req.body.last_name}`,
+            updated_at: new Date().toISOString(),
+        });
+        res.json({
+            message: `Updated user (id:${_id}).`,
+            response: updatedUser,
+        });
+    } catch (error) {
+        res.json({
+            message: `Something went wrong when trying to patch the user with _id: ${_id}`,
+        });
+    }
+}
 export async function deleteUser(req, res) {}
 
 /** this is all the functionality I had before refactoring  
