@@ -6,7 +6,7 @@ export async function getUsers(req, res) {
 }
 
 export async function createUser(req, res) {
-    const { email, password, first_name, last_name } = req.body;
+    const { email, username, first_name, last_name } = req.body;
     try {
         const existingUser = await UserModel.findOne({ email });
         if (existingUser) {
@@ -18,7 +18,7 @@ export async function createUser(req, res) {
             //create new user if they don't have a login already
             const newUser = await UserModel.create({
                 email,
-                password,
+                username,
                 name: `${first_name} ${last_name}`,
                 created_at: new Date().toISOString(),
             });

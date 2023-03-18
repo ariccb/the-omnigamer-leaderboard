@@ -1,6 +1,6 @@
-import { db } from "../index.js";
+import mongoose from "mongoose";
 
-const userSchema = new db.Schema({
+const userSchema = new mongoose.Schema({
     id: { type: String },
     name: { type: String, required: true },
     username: { type: String, required: true },
@@ -11,5 +11,5 @@ const userSchema = new db.Schema({
     },
 });
 
-const UserModel = db.model("users", userSchema);
+const UserModel = mongoose.model("users", userSchema);
 export default UserModel;

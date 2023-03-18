@@ -3,19 +3,16 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRouter from "./routes/users.js";
 
+//read the MongoDB credentials from .env file
 dotenv.config({
     path: "./auth/.env",
 });
 
 const connectionStr = process.env.MONGO_URL;
 console.log(connectionStr);
-export const db = await mongoose.connect(connectionStr);
 
-// need to move this into models/games.js
-const gameSchema = new mongoose.Schema({
-    listOfUsers: String,
-    email: String,
-});
+//assigning the connection setup
+export const db = await mongoose.connect(connectionStr);
 
 const app = express();
 const PORT = 8000;

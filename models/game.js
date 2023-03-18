@@ -1,6 +1,6 @@
-import { db } from "../index.js";
+import mongoose from "mongoose";
 
-const gameSchema = new db.Schema({
+const gameSchema = new mongoose.Schema({
     id: { type: String },
     name: { type: String, required: true },
     category: { type: String, required: true },
@@ -8,5 +8,5 @@ const gameSchema = new db.Schema({
     number_of_players: { type: Boolean, required: true },
 });
 
-const gameModel = db.model("games", gameSchema);
+const gameModel = mongoose.model("games", gameSchema);
 export default gameModel;
