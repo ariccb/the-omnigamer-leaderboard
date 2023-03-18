@@ -10,7 +10,7 @@ import {
     // updateUser,
     // addUser,
     // getAllUsers,
-} from "../controllers/users.js";
+} from "../controllers/userController.js";
 
 const userRouter = express.Router();
 
@@ -21,9 +21,9 @@ const userRouter = express.Router();
 // route to this whole endpoint is "/users"
 userRouter.get("/", getUsers);
 userRouter.post("/", createUser);
-userRouter.put("/:id", updateUser); //needs to send the whole body object
-userRouter.patch("/:id", patchUser);
-userRouter.delete("/:id", deleteUser);
+userRouter.put("/:_id", updateUser); //needs to send the whole body object
+userRouter.patch("/:_id", patchUser);
+userRouter.delete("/:_id", deleteUser);
 
 export default userRouter;
 /**my previous functionality:

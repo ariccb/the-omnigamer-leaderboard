@@ -11,6 +11,11 @@ dotenv.config({
 const connectionStr = process.env.MONGO_URL;
 console.log(connectionStr);
 
+async function main() {
+    await mongoose.connect(connectionStr);
+}
+main().catch((err) => console.log(err));
+
 //assigning the connection setup
 export const db = await mongoose.connect(connectionStr);
 

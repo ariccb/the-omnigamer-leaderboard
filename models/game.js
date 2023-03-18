@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const gameSchema = new mongoose.Schema({
-    id: { type: String },
     name: { type: String, required: true },
     category: { type: String, required: true },
     scoring_sessions: { type: ScoringSession, required: false },
