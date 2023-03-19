@@ -12,6 +12,23 @@ export async function getUsers(req, res) {
     }
 }
 
+export const getUser = async (req, res) => {
+    console.log("Attempting to GET specific user");
+    const { _id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        return res.status(404).send(`No user found with _id: ${_id}`);
+    }
+    try {
+        const retrievedUser = await UserModel.findById(_id);
+        return res.status(200).json({
+            message: `Found user ${_id}`,
+            response: retrievedUser,
+        });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
 export async function createUser(req, res) {
     console.log(`Attempting to create new user`);
 
@@ -38,7 +55,9 @@ export async function createUser(req, res) {
             // save() to the mongo db using mongoose
         }
     } catch (error) {
-        res.status(500).json({ message: "Something went wrong." });
+        res.status(500).json({
+            message: "Something went wrong when trying to create new user.",
+        });
     }
 }
 
@@ -97,7 +116,6 @@ export async function patchUser(req, res) {
         });
         res.json({
             message: `Updated user (id:${_id}).`,
-            response: updatedUser,
         });
     } catch (error) {
         res.json({
@@ -105,21 +123,22 @@ export async function patchUser(req, res) {
         });
     }
 }
-export async function deleteUser(req, res) {}
+export async function deleteUser(req, res) {
+    console.log("Trying to delete a user");
+    const { _id } = req.params;
 
-/** this is all the functionality I had before refactoring  
- 
+    console.log(`Attempting to delete user with _id: ${_id}`);
 
-
-export function updateUser(id, update) {
-    const user = users.find((x) => x.id === +id);
-    console.log(`found ${users.id}`);
-    Object.assign(user, update);
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+        return res.status(404).send(`No user found with _id: ${_id}`);
+    }
+    try {
+        const result = await UserModel.findByIdAndDelete(_id);
+        res.json({
+            message: "Deleted user",
+            result: result,
+        });
+    } catch (err) {
+        console.log(err);
+    }
 }
-// TODO - just need to figure out why i'm getting empty objects between new users {}
-
-export function deleteUser(searchId) {
-    users = users.filter((x) => x.id !== +searchId); // reassigns the entire users array back to
-    // the same variable EXCEPT for the user object that has an id that matches the search ID
-}
-**/

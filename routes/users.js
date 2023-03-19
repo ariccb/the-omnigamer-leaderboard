@@ -1,6 +1,7 @@
 import express from "express";
 import {
     getUsers,
+    getUser,
     createUser,
     updateUser,
     patchUser,
@@ -20,6 +21,7 @@ const userRouter = express.Router();
 
 // route to this whole endpoint is "/users"
 userRouter.get("/", getUsers);
+userRouter.get("/:_id", getUser);
 userRouter.post("/", createUser);
 userRouter.put("/:_id", updateUser); //needs to send the whole body object
 userRouter.patch("/:_id", patchUser);
