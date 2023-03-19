@@ -1,5 +1,5 @@
 import UserModel from "../models/user.js";
-import mongoose from "mongoose";
+import mongoose, { Error } from "mongoose";
 
 export async function getUsers(req, res) {
     console.log(`Attempting to GET list of all users.`);
@@ -30,7 +30,8 @@ export async function createUser(req, res) {
             const newUser = await UserModel.create({
                 email,
                 username,
-                name: `${first_name} ${last_name}`,
+                first_name,
+                last_name,
                 created_at: new Date().toISOString(),
             });
             res.status(201).json({ user: newUser });
@@ -57,7 +58,8 @@ export async function updateUser(req, res) {
             {
                 email,
                 username,
-                name: `${first_name} ${last_name}`,
+                first_name,
+                last_name,
                 created_at,
                 updated_at: new Date().toISOString(),
                 _id,
@@ -91,19 +93,6 @@ export async function patchUser(req, res) {
         console.log("attempting patch user");
         const updatedUser = await UserModel.findByIdAndUpdate(_id, {
             ...userPatch,
-            name: req.body.name
-                ? req.body.name
-                : req.body.first_name == undefined
-                ? res.json({
-                      message:
-                          "If updating last_name, provide first_name as well, or update both together using property 'name: first_name last_name'",
-                  })
-                : req.body.last_name == undefined
-                ? res.json({
-                      message:
-                          "If updating first_name, provide last_name as well, or update both together using property 'name: first_name last_name'",
-                  })
-                : `${req.body.first_name} ${req.body.last_name}`,
             updated_at: new Date().toISOString(),
         });
         res.json({
