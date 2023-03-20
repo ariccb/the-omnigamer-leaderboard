@@ -1,5 +1,5 @@
 import User from "../models/user.js";
-import mongoose, { Error } from "mongoose";
+import mongoose from "mongoose";
 
 export async function getAllUsers(req, res) {
     console.log(`Attempting to GET list of all users.`);

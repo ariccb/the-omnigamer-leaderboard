@@ -3,10 +3,12 @@ import {
     getOverallLeaderboard,
     getCategoryLeaderboard,
     getGameLeaderboard,
-} from "../controllers/gameController.js";
+} from "../controllers/leaderboardsController.js";
 
-const gameRouter = express.Router();
+const leaderboardRouter = express.Router();
 
 gameRouter.get("/", getOverallLeaderboard); // get the overall leaderboard
-gameRouter.get("/category", getCategoryLeaderboard);
-gameRouter.get("/game", getGameLeaderboard);
+gameRouter.get("/category/:_id", getCategoryLeaderboard);
+gameRouter.get("/game/:_id", getGameLeaderboard);
+
+export default leaderboardRouter;
