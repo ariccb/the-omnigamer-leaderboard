@@ -1,11 +1,11 @@
-import UserModel from "../models/user.js";
+import User from "../models/user.js";
 import mongoose, { Error } from "mongoose";
 
-export async function getUsers(req, res) {
+export async function getAllUsers(req, res) {
     console.log(`Attempting to GET list of all users.`);
 
     try {
-        const userList = await UserModel.find();
+        const userList = await User.find();
         res.status(200).json(userList);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -19,7 +19,7 @@ export const getUser = async (req, res) => {
         return res.status(404).send(`No user found with _id: ${_id}`);
     }
     try {
-        const retrievedUser = await UserModel.findById(_id);
+        const retrievedUser = await User.findById(_id);
         return res.status(200).json({
             message: `Found user ${_id}`,
             response: retrievedUser,
@@ -36,7 +36,7 @@ export async function createUser(req, res) {
 
     console.log(`Request body: ${req.body}`);
     try {
-        const existingUser = await UserModel.findOne({ email: email });
+        const existingUser = await User.findOne({ email: email });
         if (existingUser) {
             return res.status(403).json({
                 message:
@@ -44,7 +44,7 @@ export async function createUser(req, res) {
             }); //forbidden - user exists already
         } else {
             //create new user if they don't have a login already
-            const newUser = await UserModel.create({
+            const newUser = await User.create({
                 email,
                 username,
                 first_name,
@@ -72,7 +72,7 @@ export async function updateUser(req, res) {
         return res.status(404).send(`No user found with _id: ${_id}`);
     }
     try {
-        const updatedUser = await UserModel.findByIdAndUpdate(
+        const updatedUser = await User.findByIdAndUpdate(
             _id,
             {
                 email,
@@ -110,7 +110,7 @@ export async function patchUser(req, res) {
     }
     try {
         console.log("attempting patch user");
-        const updatedUser = await UserModel.findByIdAndUpdate(_id, {
+        const updatedUser = await User.findByIdAndUpdate(_id, {
             ...userPatch,
             updated_at: new Date().toISOString(),
         });
@@ -133,7 +133,7 @@ export async function deleteUser(req, res) {
         return res.status(404).send(`No user found with _id: ${_id}`);
     }
     try {
-        const result = await UserModel.findByIdAndDelete(_id);
+        const result = await User.findByIdAndDelete(_id);
         res.json({
             message: "Deleted user",
             result: result,
