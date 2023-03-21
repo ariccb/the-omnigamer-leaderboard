@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
     updated_at: {
         type: Date,
     },
+    omni_score: { type: Number, default: 0 },
 });
 
 const User = mongoose.model("users", userSchema);
