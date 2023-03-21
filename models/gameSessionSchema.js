@@ -1,59 +1,52 @@
 import express from "express";
 import mongoose from "mongoose";
-import Game from "./scoringTypeSchema";
 
 /**
- *"chess", GameSession: Ron(b) vs Jeff(w) on 2023/02/13 @ 11am
- *
- *
- *
- **/
+ * this will be a document for each an every separate game played.
+ * the schema should be flexible (based on the scoring-type in the gamesSchema)
+ */
+
 const gameSessionSchema = new mongoose.Schema({
-    session_entered_by: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-    },
+    date_recorded: new Date().toISOString(),
     game_id: {
-        type: Number,
+        // the id of the game that was played, ie. chess, pinball, pingpong, etc.
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Game",
         required: true,
     },
-    // example: versus(chess, outcomes could be win/lose/draw), High Score(scrabble), Low Score(golf),
-    // Lowest Time Score(racing), Highest Time Score (survival),
-    scoring_type: {
-        type: String,
-        enum: [
-            // lets you have pre-determined options
-            "versus",
-            "high-score",
-            "low-score",
-            "lowest-time-score",
-            "highest-time-score",
-        ],
-        default: "High Score",
-    },
-    win_loss_draw_result: {
-        type: String,
-        enum: ["Win", "Lose", "Draw"],
-        required: false,
-    },
-    time_result: { type: Number, required: false },
-    score_result: { type: Number, required: false },
-    players_in_session: [
+    players_won_result: [
+        // link to the User(s) that won to keep track
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-    ],
-    winners: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: "User",
             required: false,
         },
     ],
+    players_lost_result: [
+        // link to the User(s) that lost to keep track
+        {
+            type: mongoose.Types.ObjectId,
+            ref: "User",
+            required: false,
+        },
+    ],
+    players_tied_result: [
+        // link to the Users that tied to keep track
+        {
+            type: mongoose.Types.ObjectId,
+            ref: "User",
+            required: false,
+        },
+    ],
+    time_result: { type: Number, required: false },
+    score_result: { type: Number, required: false },
 });
+/** can I add time_result and score_result based on game picked?
+gameSessionSchema.pre('save', async function() {
 
+    await doStuff();
+    await doMoreStuff();
+  });
+ **/
 const GameSession = mongoose.model("game-sessions", gameSessionSchema);
 export default GameSession;
