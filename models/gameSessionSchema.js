@@ -7,7 +7,7 @@ import mongoose from "mongoose";
  */
 
 const gameSessionSchema = new mongoose.Schema({
-    date_recorded: new Date().toISOString(),
+    date_recorded: { type: Date, default: new Date() },
     game_id: {
         // the id of the game that was played, ie. chess, pinball, pingpong, etc.
         type: mongoose.Schema.Types.ObjectId,

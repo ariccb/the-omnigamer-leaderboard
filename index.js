@@ -1,9 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import userRouter from "./routes/users.js";
-import leaderboardRouter from "./routes/leaderboards.js";
-import gameSessionRouter from "./routes/gameSessions.js";
+import userRouter from "./routes/userRouter.js";
+// import leaderboardRouter from "./routes/leaderboards.js";
+// import gameSessionRouter from "./routes/gameSessionRouter.js";
+import gameRouter from "./routes/gameRouter.js";
 
 //read the MongoDB credentials from .env file
 dotenv.config({
@@ -30,9 +31,11 @@ app.get("/", (req, res) => {
     res.send("You reached the home endpoint.\n");
 });
 
-app.use("/users", userRouter);
-app.use("leaderboards", leaderboardRouter);
-app.use("game-sessions", gameSessionRouter);
+// list of the routers i'm using
+app.use("/users", userRouter); // all the functionality to do with users
+// app.use("/leaderboards", leaderboardRouter);
+app.use("/game", gameRouter);
+// app.use("/game/sessions", gameSessionRouter);
 
 //port the server is listening on
 app.listen(PORT, () => {
