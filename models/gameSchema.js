@@ -7,7 +7,7 @@ const gameSchema = new mongoose.Schema({
     category_name: {
         type: String,
         enum: ["pub game", "board game", "sport game", "video game"], // lets you have pre-determined options
-        default: "board games",
+        default: "board game",
         required: true,
     },
     name: {
@@ -26,7 +26,7 @@ const gameSchema = new mongoose.Schema({
             "lowest-time-score",
             "highest-time-score",
         ],
-        default: "High Score",
+        default: "high-score",
     },
 });
 
