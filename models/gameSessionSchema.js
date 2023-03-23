@@ -8,17 +8,17 @@ import mongoose from "mongoose";
 
 const gameSessionSchema = new mongoose.Schema({
     date_recorded: { type: Date, default: new Date() },
-    game_id: {
+    game: {
         // the id of the game that was played, ie. chess, pinball, pingpong, etc.
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Game",
+        ref: "games_collection",
         required: true,
     },
     players_won_result: [
         // link to the User(s) that won to keep track
         {
             type: mongoose.Types.ObjectId,
-            ref: "User",
+            ref: "users_collection",
             required: false,
         },
     ],
@@ -26,7 +26,7 @@ const gameSessionSchema = new mongoose.Schema({
         // link to the User(s) that lost to keep track
         {
             type: mongoose.Types.ObjectId,
-            ref: "User",
+            ref: "users_collection",
             required: false,
         },
     ],
@@ -34,12 +34,12 @@ const gameSessionSchema = new mongoose.Schema({
         // link to the Users that tied to keep track
         {
             type: mongoose.Types.ObjectId,
-            ref: "User",
+            ref: "users_collection",
             required: false,
         },
     ],
-    time_result: { type: Number, required: false },
-    score_result: { type: Number, required: false },
+    time_score_result: { type: Number, required: false },
+    high_low_score_result: { type: Number, required: false },
 });
 /** can I add time_result and score_result based on game picked?
 gameSessionSchema.pre('save', async function() {
@@ -48,5 +48,10 @@ gameSessionSchema.pre('save', async function() {
     await doMoreStuff();
   });
  **/
-const GameSession = mongoose.model("game-sessions", gameSessionSchema);
+const GameSession = mongoose.model(
+    "game_sessions_collection",
+    gameSessionSchema,
+    "game_sessions_collection"
+); // game_sessions_collection is the name of the collection on MongoDB
+
 export default GameSession;

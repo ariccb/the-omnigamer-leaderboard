@@ -4,13 +4,14 @@
 import mongoose from "mongoose";
 
 const gameSchema = new mongoose.Schema({
-    category_name: {
-        type: String,
-        enum: ["pub game", "board game", "sport game", "video game"], // lets you have pre-determined options
-        default: "board game",
+    category: {
+        // adds the game to a specific category
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "game_categories_collection",
         required: true,
     },
     name: {
+        // the name of the game that was played, ie. chess, pinball, pingpong, etc.
         type: String,
         required: true,
     },
@@ -30,5 +31,5 @@ const gameSchema = new mongoose.Schema({
     },
 });
 
-const Game = mongoose.model("games", gameSchema); //game-categories is the name of the collection on MongoDB
+const Game = mongoose.model("games_collection", gameSchema, "games_collection"); //games_collection is the name of the collection on MongoDB
 export default Game;

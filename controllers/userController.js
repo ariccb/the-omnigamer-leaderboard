@@ -1,5 +1,6 @@
-import User from "../models/user.js";
+import User from "../models/userSchema.js";
 import mongoose from "mongoose";
+const isValidId = mongoose.Types.ObjectId.isValid;
 
 export async function getAllUsers(req, res) {
     console.log(`Attempting to GET list of all users.`);
@@ -15,7 +16,7 @@ export async function getAllUsers(req, res) {
 export const getUser = async (req, res) => {
     console.log("Attempting to GET specific user");
     const { _id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(_id)) {
+    if (!isValidId(_id)) {
         return res.status(404).send(`No user found with _id: ${_id}`);
     }
     try {
@@ -68,7 +69,7 @@ export async function updateUser(req, res) {
 
     console.log(`Attempting to update user with _id: ${_id}`);
 
-    if (!mongoose.Types.ObjectId.isValid(_id)) {
+    if (!isValidId(_id)) {
         return res.status(404).send(`No user found with _id: ${_id}`);
     }
     try {
@@ -81,7 +82,6 @@ export async function updateUser(req, res) {
                 last_name,
                 created_at,
                 updated_at: new Date().toISOString(),
-                _id,
             },
             {
                 new: true, // I believe if this doesn't find an existing user to update, it creates a new one
@@ -105,17 +105,20 @@ export async function patchUser(req, res) {
 
     console.log(`Attempting to update user with _id: ${_id}`);
 
-    if (!mongoose.Types.ObjectId.isValid(_id)) {
+    if (!isValidId(_id)) {
         return res.status(404).send(`No user found with _id: ${_id}`);
     }
     try {
         console.log("attempting patch user");
-        const updatedUser = await User.findByIdAndUpdate(_id, {
+        await User.findByIdAndUpdate(_id, {
             ...userPatch,
             updated_at: new Date().toISOString(),
         });
+        const userUpdated = await User.findById(_id);
         res.json({
             message: `Updated user (id:${_id}).`,
+            updated: { userPatch },
+            result: { userUpdated },
         });
     } catch (error) {
         res.json({
@@ -129,7 +132,7 @@ export async function deleteUser(req, res) {
 
     console.log(`Attempting to delete user with _id: ${_id}`);
 
-    if (!mongoose.Types.ObjectId.isValid(_id)) {
+    if (!isValidId(_id)) {
         return res.status(404).send(`No user found with _id: ${_id}`);
     }
     try {
