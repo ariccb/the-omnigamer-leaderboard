@@ -20,17 +20,17 @@
 import express from "express";
 import {
     createNewGameType,
-    createNewGameCategoryType,
-    // getOverallSessionHistory,
-    // getCategorySessionHistory,
-    // getGameSessionHistory,
+    updateGame,
 } from "../controllers/gamesController.js";
+import { createNewGameCategoryType } from "../controllers/gameCategoryController.js";
+import // getOverallSessionHistory, getCategorySessionHistory, getGameSessionHistory,
+"../controllers/gameSessionController.js";
 
 const gameRouter = express.Router();
 
 // for creating a new game type, ie: chess, ping-pong, scrabble, darts, etc.
-gameRouter.post("/games/:_id", createNewGameType); // create a new game type
-//:_id is the game category's _id
+gameRouter.post("/games", createNewGameType); // create a new game type... _id is the game category's _id
+gameRouter.patch("/games/:game_id", updateGame); // update an existing game type
 
 // for creating a new game category ie: bar games, video games, sports, board games, etc. --likely won't be used much
 gameRouter.post("/categories", createNewGameCategoryType);

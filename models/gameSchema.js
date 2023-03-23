@@ -4,15 +4,15 @@
 import mongoose from "mongoose";
 
 const gameSchema = new mongoose.Schema({
+    name: {
+        // the name of the game that was played, ie. chess, pinball, pingpong, etc.
+        type: String,
+        required: true,
+    },
     category: {
         // adds the game to a specific category
         type: mongoose.Schema.Types.ObjectId,
         ref: "game_categories_collection",
-        required: true,
-    },
-    name: {
-        // the name of the game that was played, ie. chess, pinball, pingpong, etc.
-        type: String,
         required: true,
     },
     scoring_type: {
