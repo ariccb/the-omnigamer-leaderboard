@@ -26,10 +26,17 @@ const gameSchema = new mongoose.Schema({
             "low-score",
             "lowest-time-score",
             "highest-time-score",
+            "cyo-adventure",
+            "virtual-pet",
         ],
         default: "high-score",
     },
 });
+
+// gameSchema.pre("save", function (next) {
+//     this.category == null ? (this.category = "641c85fb8ece84d46f09f047") : null;
+//     next();
+// });
 
 const Game = mongoose.model("games_collection", gameSchema, "games_collection"); //games_collection is the name of the collection on MongoDB
 export default Game;

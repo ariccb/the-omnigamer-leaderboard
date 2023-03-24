@@ -6,9 +6,9 @@ const isValidId = mongoose.Types.ObjectId.isValid;
 
 export const addNewGameSession = async (req, res) => {
     console.log("Attempting to add new game session");
-    const { _id } = req.params; //you are passing in the _id of the game you played
-
     const {
+        game_id,
+        date_recorded,
         players_won_result,
         players_lost_result,
         players_tied_result,

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { model } from "mongoose";
 import Game from "../models/gameSchema.js";
 import GameCategory from "../models/gameCategorySchema.js";
 import GameSession from "../models/gameSessionSchema.js";
@@ -7,10 +7,10 @@ const isValidId = mongoose.Types.ObjectId.isValid;
 export const createNewGameType = async (req, res) => {
     console.log("Attempting to create a new game type");
 
-    const { name, category_id, scoring_type } = req.body;
+    const { name, category, scoring_type } = req.body;
 
     try {
-        console.log(`Trying to get game category from Id:${category_id}`);
+        console.log(`Trying to get game category from Id:${category}`);
 
         const existingGame = await Game.findOne({ name: name });
         const existingGamePlural = await Game.findOne({
@@ -27,7 +27,7 @@ export const createNewGameType = async (req, res) => {
             const newGame = await Game.create({
                 name,
                 scoring_type,
-                category: await GameCategory.findById(category_id),
+                category: await GameCategory.findById(category),
             });
             console.log(newGame);
             res.status(201).json({ game: newGame });
@@ -43,29 +43,31 @@ export const createNewGameType = async (req, res) => {
 export async function updateGame(req, res) {
     console.log(`Trying to update a game.`);
     const { game_id } = req.params;
-    const { name, category_id, scoring_type } = req.body;
-    console.log(`Attempting to update game with _id: ${game_id}`);
+    const { name, category, scoring_type } = req.body;
+    console.log(
+        `Attempting to update game with _id: ${game_id} and category _id of: ${category}`
+    );
     try {
-        console.log(await GameCategory.findById(category_id));
         const updatedGame = await Game.findByIdAndUpdate(
             game_id,
             {
                 name,
-                category: await GameCategory.findById(category_id)._id,
+                category: await GameCategory.findById(category)._id,
                 scoring_type,
             },
             {
-                new: false, // I believe if this doesn't find an existing game to update, it creates a new one if set to true
+                new: true, // I believe if this doesn't find an existing game to update, it creates a new one if set to true
             }
-        );
+        ).populate("category");
+        updatedGame.save();
         res.json({
             message: `Updated game (id:${game_id}).`,
-            before: updatedGame,
-            after: await Game.findById(game_id),
+            result: updatedGame,
         });
     } catch (error) {
+        console.log(error);
         res.json({
-            message: `Something went wrong when trying to update the user with _id: ${game_id}`,
+            message: `Something went wrong when trying to update the game with _id: ${game_id}`,
         });
     }
 }
