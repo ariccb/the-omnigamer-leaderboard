@@ -48,7 +48,20 @@ export async function updateGame(req, res) {
         `Attempting to update game with _id: ${game_id} and category _id of: ${category}`
     );
     try {
-        const updatedGame = await Game.findByIdAndUpdate(
+        const updatedGame = await Game.updateOne(
+            { _id: game_id },
+            {
+                name: name,
+                category: new mongoose.Types.ObjectId(category),
+                scoring_type: scoring_type,
+            }
+        );
+        res.json({
+            message: `Updated game (id:${game_id}).`,
+            result: await Game.findById(game_id).populate("category"),
+        });
+        /** --this is the function that DIDN'T work. not sure why!--
+            const updatedGame = await Game.findByIdAndUpdate(
             game_id,
             {
                 name,
@@ -59,11 +72,7 @@ export async function updateGame(req, res) {
                 new: true, // I believe if this doesn't find an existing game to update, it creates a new one if set to true
             }
         ).populate("category");
-        updatedGame.save();
-        res.json({
-            message: `Updated game (id:${game_id}).`,
-            result: updatedGame,
-        });
+        **/
     } catch (error) {
         console.log(error);
         res.json({

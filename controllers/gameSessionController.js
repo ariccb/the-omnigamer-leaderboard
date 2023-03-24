@@ -15,8 +15,8 @@ export const addNewGameSession = async (req, res) => {
         time_score_result,
         high_low_score_result,
     } = req.body;
-    // GameSession.create({
-    //     game: toId(_id),
-    // });
+    const newGameSession = await GameSession.create({
+        game: await Game.findById(game_id),
+    });
     console.log(`The request body is: ${req.body}`);
 };

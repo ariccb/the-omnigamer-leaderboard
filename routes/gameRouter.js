@@ -2,9 +2,9 @@
  * - games (ie,"chess", "scrabble", "ping-pong", "21-basketball")
  * - categories (ie. "board games", "bar games", "sports", "video games")
  * - sessions (ie. the individual 'round' or 'game-session' of a specific type of game)
- * 
+ *
  * this route's base url is https://localhost:8000/games
- * 
+ *
  * example POST body in json when creating a new game type: POST request to: https://localhost:8000/games/<insertcategoryidhere>
 {
     "name": "chess",
