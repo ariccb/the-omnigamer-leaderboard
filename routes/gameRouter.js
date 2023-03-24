@@ -23,8 +23,7 @@ import {
     updateGame,
 } from "../controllers/gamesController.js";
 import { createNewGameCategoryType } from "../controllers/gameCategoryController.js";
-import // getOverallSessionHistory, getCategorySessionHistory, getGameSessionHistory,
-"../controllers/gameSessionController.js";
+import { addNewGameSession } from "../controllers/gameSessionController.js";
 
 const gameRouter = express.Router();
 
@@ -32,8 +31,15 @@ const gameRouter = express.Router();
 gameRouter.post("/games", createNewGameType); // create a new game type... _id is the game category's _id
 gameRouter.patch("/games/:game_id", updateGame); // update an existing game type
 
-// for creating a new game category ie: bar games, video games, sports, board games, etc. --likely won't be used much
+/** for creating a new game category
+ * ie: bar games, video games, sports, board games, etc.
+ * --likely won't be used much  **/
 gameRouter.post("/categories", createNewGameCategoryType);
+
+/** for creating a new game session
+ * ie: { game:"chess", players_won: User_id, players_lost: User_id, high_score: 300150 }
+ */
+gameRouter.post("/sessions", addNewGameSession);
 
 // for getting game sessions
 // gameRouter.get("/sessions", getOverallSessionHistory); // get all sessions from all categories

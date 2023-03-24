@@ -14,7 +14,7 @@ const gameSessionSchema = new mongoose.Schema({
         ref: "games_collection",
         required: true,
     },
-    players_won_result: [
+    players_won: [
         // link to the User(s) that won to keep track
         {
             type: mongoose.Types.ObjectId,
@@ -22,7 +22,7 @@ const gameSessionSchema = new mongoose.Schema({
             required: false,
         },
     ],
-    players_lost_result: [
+    players_lost: [
         // link to the User(s) that lost to keep track
         {
             type: mongoose.Types.ObjectId,
@@ -30,7 +30,7 @@ const gameSessionSchema = new mongoose.Schema({
             required: false,
         },
     ],
-    players_tied_result: [
+    players_tied: [
         // link to the Users that tied to keep track
         {
             type: mongoose.Types.ObjectId,
@@ -38,16 +38,12 @@ const gameSessionSchema = new mongoose.Schema({
             required: false,
         },
     ],
-    time_score_result: { type: Number, required: false },
-    high_low_score_result: { type: Number, required: false },
+    lowest_time_score: { type: Number, required: false },
+    highest_time_score: { type: Number, required: false },
+    high_score: { type: Number, required: false },
+    low_score: { type: Number, required: false },
 });
-/** can I add time_result and score_result based on game picked?
-gameSessionSchema.pre('save', async function() {
 
-    await doStuff();
-    await doMoreStuff();
-  });
- **/
 const GameSession = mongoose.model(
     "game_sessions_collection",
     gameSessionSchema,
