@@ -2,7 +2,6 @@ import mongoose, { model } from "mongoose";
 import Game from "../models/gameSchema.js";
 import GameCategory from "../models/gameCategorySchema.js";
 import GameSession from "../models/gameSessionSchema.js";
-const isValidId = mongoose.Types.ObjectId.isValid;
 
 export const createNewGameType = async (req, res) => {
     console.log("Attempting to create a new game type");
@@ -11,7 +10,7 @@ export const createNewGameType = async (req, res) => {
 
     try {
         console.log(`Trying to get game category from Id:${category}`);
-
+        const categoryObj = await GameCategory.findOne({ _id: category });
         const existingGame = await Game.findOne({ name: name });
         const existingGamePlural = await Game.findOne({
             name: name + "s",
@@ -24,13 +23,16 @@ export const createNewGameType = async (req, res) => {
             });
         } else {
             //create new game record on the database
-            const newGame = await Game.create({
+            const gameObj = await Game.create({
                 name,
                 scoring_type,
-                category: await GameCategory.findById(category),
+                category: categoryObj._id,
             });
-            console.log(newGame);
-            res.status(201).json({ game: newGame });
+            await gameObj.save();
+            await categoryObj.games.push(gameObj);
+            await categoryObj.save();
+
+            res.status(201).json({ game: gameObj });
         }
     } catch (error) {
         console.log(error);

@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema({
     updated_at: {
         type: Date,
     },
+    sessions_played: [
+        // link to the User(s) that won to keep track
+        {
+            type: mongoose.Types.ObjectId,
+            ref: "game_sessions_collection",
+            required: false,
+        },
+    ],
     omni_elo_score: { type: Number, default: 100 }, // overall elo score between ALL GAMES
     // "pub game", "board game", "sport game", "video game
     category_elo_score: {

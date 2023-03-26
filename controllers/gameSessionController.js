@@ -32,10 +32,15 @@ export const addNewGameSession = async (req, res) => {
         });
         const newSessionId = newGameSession._id;
         console.log(newSessionId);
+
         /**
-         * do processing for updating user's elo scores based
+         * do processing for collecting, and then calculating user's elo scores based
          * on game_id ("and scoring type") here.
          **/
+
+        /**
+         * do processing for saving the elo scores to a new record on the game_elo_collection db here
+         * **/
         res.status(201).json({
             message: `Successfully created new session record:`,
             result: await GameSession.findOne({ _id: newSessionId }).populate({

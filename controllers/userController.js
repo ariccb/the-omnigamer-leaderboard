@@ -51,9 +51,21 @@ export async function createUser(req, res) {
                 first_name,
                 last_name,
                 created_at: new Date().toISOString(),
+                sessions_played: [],
             });
-            res.status(201).json({ user: newUser });
-            // save() to the mongo db using mongoose
+            const newUserId = newUser._id;
+
+            res.status(201).json({
+                message: "Successfully added a new user.",
+                result: await User.findOne({ _id: newUserId }).populate({
+                    path: "sessions_played",
+                    model: "game_sessions_collection",
+                    populate: {
+                        path: "game",
+                        model: "games_collection",
+                    },
+                }),
+            });
         }
     } catch (error) {
         res.status(500).json({
@@ -68,10 +80,6 @@ export async function updateUser(req, res) {
     const { email, username, first_name, last_name, created_at } = req.body;
 
     console.log(`Attempting to update user with _id: ${_id}`);
-
-    if (!isValidId(_id)) {
-        return res.status(404).send(`No user found with _id: ${_id}`);
-    }
     try {
         const updatedUser = await User.findByIdAndUpdate(
             _id,
@@ -87,9 +95,17 @@ export async function updateUser(req, res) {
                 new: true, // I believe if this doesn't find an existing user to update, it creates a new one
             }
         );
-        res.json({
-            message: `Updated user (id:${_id}).`,
-            response: updatedUser,
+        const updatedUserId = updatedUser._id;
+        res.status(200).json({
+            message: "Successfully updated a new user.",
+            result: await User.findOne({ _id: updatedUserId }).populate({
+                path: "sessions_played",
+                model: "game_sessions_collection",
+                populate: {
+                    path: "game",
+                    model: "games_collection",
+                },
+            }),
         });
     } catch (error) {
         res.json({

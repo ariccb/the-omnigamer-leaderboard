@@ -1,8 +1,44 @@
 import mongoose from "mongoose";
-import Game from "../models/gameSchema.js";
 import GameCategory from "../models/gameCategorySchema.js";
-import GameSession from "../models/gameSessionSchema.js";
-const isValidId = mongoose.Types.ObjectId.isValid;
+import Game from "../models/gameSchema.js";
+
+export async function getAllCategories(req, res) {
+    console.log(`Attempting to GET list of all Game Categories.`);
+    let gameList = await Game.find();
+    console.log(gameList);
+    try {
+        const categoryList = await GameCategory.find()
+            .populate({
+                path: "games",
+                model: "games_collection",
+                populate: {
+                    path: "game_sessions",
+                    model: "game_sessions_collection",
+                },
+            })
+            .exec();
+        res.status(200).json(categoryList);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+export const getGameCategory = async (req, res) => {
+    console.log("Attempting to GET specific Game Category");
+    const { _id } = req.params;
+    try {
+        const retrievedCategory = await GameCategory.findById(_id);
+        if (!retrievedCategory) {
+            return res.status(404).send(`No category found with _id: ${_id}`);
+        }
+        return res.status(200).json({
+            message: `Found Category ${_id}`,
+            response: retrievedCategory,
+        });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
 
 export const createNewGameCategoryType = async (req, res) => {
     console.log("Attempting to create a new game category type");

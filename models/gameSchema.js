@@ -15,6 +15,13 @@ const gameSchema = new mongoose.Schema({
         ref: "game_categories_collection",
         required: true,
     },
+    game_sessions: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "game_sessions_collection", // this needs to reference the DB COLLECTION name, not the model name.
+            required: false,
+        },
+    ],
     scoring_type: {
         // example: versus(chess, outcomes could be win/lose/draw), High Score(scrabble), Low Score(golf),
         // Lowest Time Score(racing), Highest Time Score (survival),

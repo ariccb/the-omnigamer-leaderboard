@@ -11,10 +11,10 @@ const gameCategorySchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    game_sessions: [
+    games: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "game_sessions_collection", // i believe this needs to reference the DB COLLECTION name, not the model name. If that doesn't work try the model name
+            ref: "games_collection", // this needs to reference the DB COLLECTION name, not the model name.
             required: false,
         },
     ],
