@@ -3,16 +3,16 @@ import Game from "../models/gameSchema.js";
 import GameSession from "../models/gameSessionSchema.js";
 import GameCategory from "../models/gameCategorySchema.js";
 import User from "../models/userSchema.js";
-import PlayerElo from "../models/playerEloSchema.js";
-import { versusEloCalculator } from "../controllers/elo-updaters/eloScoreUpdater.js";
+import GameElo from "../models/gameEloSchema.js";
+import { versusEloHandler } from "./scoring-type-handlers/versusHandler.js";
 
 export const addNewGameSession = async (req, res) => {
     console.log("Attempting to add new game session");
     const {
         game_id,
-        player_won,
-        player_lost,
-        player_tied,
+        players_won,
+        players_lost,
+        players_tied,
         lowest_time_score,
         highest_time_score,
         high_score,
@@ -20,72 +20,40 @@ export const addNewGameSession = async (req, res) => {
     } = req.body;
 
     try {
-        const gameObj = await Game.findById(game_id);
-        const playerWonObj = await User.findOne({ _id: player_won });
-        const playerLostObj = await User.findOne({ _id: player_lost });
-        const playerTiedObj = await User.findOne({ _id: player_tied });
-        console.log(`gameObj: ${gameObj}`);
-        console.log(`playersWonObj: ${playerWonObj}`);
-        console.log(`playersLostObj: ${playerLostObj}`);
-        console.log(`playersTiedOjb: ${playerTiedObj}`);
+        const game = await Game.findById(game_id);
+        const playersWon = await User.find({ _id: players_won });
+        const playersLost = await User.find({ _id: players_lost });
+        const playersTied = await User.find({ _id: players_tied });
+        console.log(`gameObj: ${game}`);
+        console.log(`playersWonObj: ${playersWon}`);
+        console.log(`playersLostObj: ${playersLost}`);
+        console.log(`playersTiedOjb: ${playersTied}`);
         const newGameSession = await GameSession.create({
-            game: gameObj._id,
+            game: game._id,
             date_recorded: new Date().toISOString(),
-            player_won: playerWonObj._id,
-            player_lost: playerLostObj._id,
-            player_tied: player_tied ? playerTiedObj._id : null,
+            players_won: playersWon.map((player) => player._id), // players_won will be an array of _id's - map() always makes an array
+            players_lost: playersLost.map((player) => player._id), // players_lost will be an array of _id's
+            players_tied: playersTied.map((player) => player._id), // players_tied will be an array of _id's
             lowest_time_score: lowest_time_score,
             highest_time_score: highest_time_score,
             high_score: high_score,
             low_score: low_score,
         });
-
-        /**
-         * do processing for collecting, and then calculating user's elo scores based
-         * on game_id ("and scoring type") here.
-         **/
-        console.log(playerWonObj);
-        const winnerEloDoc = await PlayerElo.findOneAndUpdate(
-            {
-                game: gameObj._id,
-                player: playerWonObj._id,
-            },
-            {
-                game: gameObj._id,
-                player: playerWonObj._id,
-                elo_score: 100,
-            },
-            { upsert: true, new: true }
-        )
-            .populate("game", "name")
-            .populate("player", "first_name last_name username");
-        console.log(`winnerEloDoc: ${winnerEloDoc}`);
-        let winnerElo = winnerEloDoc.elo_score;
-        console.log(`Current Elo Score of winner: ${winnerElo}`);
-
-        const scoringType = gameObj.scoring_type;
-        if (scoringType === "versus") {
-            // versusEloCalculator(playersWonObj);
-        }
+        // do processing for collecting, and then calculating user's elo scores based
+        // on game_id ("and scoring type") here.
+        const scoringType = game.scoring_type;
         console.log(`Scoring_type: ${scoringType}`);
-        //get 'scoring_type' from the game that was just played - this determines how the scores will be calculated.
-        //check if user has an elo record for that game type yet - collect scores for player_won and player_lost
-        //calculate elo - for each player
 
-        //then send the new information as an update to the Elo record - or create
-        //one using PlayerElo.findOneAndUpdate(conditions(in object form), update(in object form), {upsert: true, new: true}))
+        if (scoringType === "versus") {
+            versusEloHandler(game, playersWon, playersLost, playersTied);
+        }
+        // if (scoringType === "high-score") { //for single-player highscore-type games, only playersWon is used
+        //     versusEloHandler(gameObj, playersWon);
+        // }
 
-        /**
-         * do processing for saving the elo scores to a new record on the game_elo_collection db here
-         * **/
         res.status(201).json({
             message: `Successfully created new session record:`,
-            winnerEloDoc: winnerEloDoc,
-            // result: newGameSession.populate({
-            //     path: "game",
-            //     model: Game.base,
-            //     populate: { path: "category", model: GameCategory.base },
-            // }),
+            newSession: newGameSession,
         });
     } catch (error) {
         console.log(error);

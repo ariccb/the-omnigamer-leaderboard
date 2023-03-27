@@ -1,7 +1,3 @@
-export function versusEloCalculator(winnerCurrentElo, loserCurrentElo) {
-    return winnerUpdatedElo, LoserUpdatedElo;
-}
-
 /** add more calculators as they are needed/when I have time
  *
 export function highScoreEloCalculator(winnerCurrentElo) {
