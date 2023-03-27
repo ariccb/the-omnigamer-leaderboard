@@ -3,6 +3,45 @@ import Game from "../models/gameSchema.js";
 import GameCategory from "../models/gameCategorySchema.js";
 import GameSession from "../models/gameSessionSchema.js";
 
+export async function getAllGames(req, res) {
+    console.log(`Attempting to GET list of all Games.`);
+    try {
+        const gameList = await Game.find()
+            .populate({
+                path: "category",
+                select: "name",
+                model: "game_categories_collection",
+            })
+            .populate({
+                path: "game_sessions",
+                model: "game_sessions_collection",
+            })
+            .exec();
+        res.status(200).json(gameList);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+export const getGame = async (req, res) => {
+    console.log("Attempting to GET specific Game");
+    const { game_id } = req.params;
+    try {
+        const retrievedGame = await Game.findById(game_id);
+        if (!retrievedGame) {
+            return res
+                .status(404)
+                .send(`No game found with game_id: ${game_id}`);
+        }
+        return res.status(200).json({
+            message: `Found Game ${game_id}`,
+            response: retrievedGame,
+        });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
 export const createNewGameType = async (req, res) => {
     console.log("Attempting to create a new game type");
 
@@ -31,7 +70,6 @@ export const createNewGameType = async (req, res) => {
             await gameObj.save();
             await categoryObj.games.push(gameObj);
             await categoryObj.save();
-
             res.status(201).json({ game: gameObj });
         }
     } catch (error) {
@@ -49,18 +87,21 @@ export async function updateGame(req, res) {
     console.log(
         `Attempting to update game with _id: ${game_id} and category _id of: ${category}`
     );
+
     try {
-        const updatedGame = await Game.updateOne(
+        const categoryObj = await GameCategory.findOne({ _id: category });
+        const gameObj = await Game.findOne({ _id: game_id });
+        const updatedGameObj = await Game.updateOne(
             { _id: game_id },
             {
                 name: name,
-                category: new mongoose.Types.ObjectId(category),
+                category: categoryObj,
                 scoring_type: scoring_type,
             }
         );
         res.json({
-            message: `Updated game (id:${game_id}).`,
-            result: await Game.findById(game_id).populate("category"),
+            message: `Updated (${gameObj.name}).`,
+            result: await Game.findById(game_id).populate("category", "name"),
         });
         /** --this is the function that DIDN'T work. not sure why!--
             const updatedGame = await Game.findByIdAndUpdate(
@@ -80,6 +121,28 @@ export async function updateGame(req, res) {
         res.json({
             message: `Something went wrong when trying to update the game with _id: ${game_id}`,
         });
+    }
+}
+
+export async function deleteGame(req, res) {
+    console.log("Trying to delete a game");
+    const { game_id } = req.params;
+
+    console.log(`Attempting to delete game with game_id: ${game_id}`);
+
+    try {
+        const result = await Game.findByIdAndDelete(game_id);
+        res.json({
+            message: "Deleted game",
+            result: result,
+        });
+    } catch (err) {
+        console.log(err);
+        return res
+            .status(400)
+            .send(
+                `There was an error trying to delete the game with game_id: ${game_id}. Are you suse that game exists?`
+            );
     }
 }
 

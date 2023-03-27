@@ -4,8 +4,6 @@ import Game from "../models/gameSchema.js";
 
 export async function getAllCategories(req, res) {
     console.log(`Attempting to GET list of all Game Categories.`);
-    let gameList = await Game.find();
-    console.log(gameList);
     try {
         const categoryList = await GameCategory.find()
             .populate({

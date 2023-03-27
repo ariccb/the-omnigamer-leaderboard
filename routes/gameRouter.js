@@ -19,8 +19,11 @@
 
 import express from "express";
 import {
+    getAllGames,
+    getGame,
     createNewGameType,
     updateGame,
+    deleteGame,
 } from "../controllers/gamesController.js";
 import {
     getAllCategories,
@@ -34,8 +37,11 @@ const gameRouter = express.Router();
 /** for interacting with and creating new game types;
  * ie: chess, ping-pong, scrabble, darts, etc.
  **/
+gameRouter.get("/games", getAllGames);
+gameRouter.get("/games/:game_id", getGame);
 gameRouter.post("/games", createNewGameType); // create a new game type... _id is the game category's _id
 gameRouter.patch("/games/:game_id", updateGame); // update an existing game type
+gameRouter.delete("/games/:game_id", deleteGame); // update an existing game type
 
 /** for interacting with and creating new game categories;
  * ie: bar games, video games, sports, board games, etc.

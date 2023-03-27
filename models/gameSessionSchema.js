@@ -14,30 +14,31 @@ const gameSessionSchema = new mongoose.Schema({
         ref: "games_collection",
         required: true,
     },
-    players_won: [
+    // not sure how to allow multiple users to win/lose/tie
+    players_won:
         // link to the User(s) that won to keep track
         {
             type: mongoose.Types.ObjectId,
             ref: "users_collection",
             required: false,
         },
-    ],
-    players_lost: [
+
+    players_lost:
         // link to the User(s) that lost to keep track
         {
             type: mongoose.Types.ObjectId,
             ref: "users_collection",
             required: false,
         },
-    ],
-    players_tied: [
+
+    players_tied:
         // link to the Users that tied to keep track
         {
             type: mongoose.Types.ObjectId,
             ref: "users_collection",
             required: false,
         },
-    ],
+
     lowest_time_score: { type: Number, required: false },
     highest_time_score: { type: Number, required: false },
     high_score: { type: Number, required: false },

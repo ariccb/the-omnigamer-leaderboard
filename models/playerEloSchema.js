@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
-const gameEloSchema = new mongoose.Schema({
+const playerEloSchema = new mongoose.Schema({
     game: {
         // adds the game to a specific category
         type: mongoose.Schema.Types.ObjectId,
         ref: "games_collection",
         required: true,
     },
-    user: {
+    player: {
         // adds the game to a specific category
         type: mongoose.Schema.Types.ObjectId,
         ref: "users_collection",
@@ -16,9 +16,9 @@ const gameEloSchema = new mongoose.Schema({
     elo_score: { type: Number, required: true, default: 100 },
 });
 
-const GameElo = mongoose.model(
+const PlayerElo = mongoose.model(
     "game_elo_collection",
-    gameEloSchema,
+    playerEloSchema,
     "game_elo_collection"
 ); //games_collection is the name of the collection on MongoDB
-export default GameElo;
+export default PlayerElo;

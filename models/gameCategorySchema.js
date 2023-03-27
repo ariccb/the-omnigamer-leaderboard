@@ -16,6 +16,7 @@ const gameCategorySchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "games_collection", // this needs to reference the DB COLLECTION name, not the model name.
             required: false,
+            unique: true,
         },
     ],
 });
