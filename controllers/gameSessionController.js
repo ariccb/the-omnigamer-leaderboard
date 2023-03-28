@@ -44,8 +44,14 @@ export const addNewGameSession = async (req, res) => {
         const scoringType = game.scoring_type;
         console.log(`Scoring_type: ${scoringType}`);
 
+        let eloResult;
         if (scoringType === "versus") {
-            versusEloHandler(game, playersWon, playersLost, playersTied);
+            eloResult = versusEloHandler(
+                game,
+                playersWon,
+                playersLost,
+                playersTied
+            );
         }
         // if (scoringType === "high-score") { //for single-player highscore-type games, only playersWon is used
         //     versusEloHandler(gameObj, playersWon);
@@ -54,6 +60,7 @@ export const addNewGameSession = async (req, res) => {
         res.status(201).json({
             message: `Successfully created new session record:`,
             newSession: newGameSession,
+            eloResult: eloResult,
         });
     } catch (error) {
         console.log(error);

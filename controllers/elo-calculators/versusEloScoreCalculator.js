@@ -67,22 +67,29 @@ export function versusEloCalculator(
                     (pTwoCurrentElo + K * (1 - Pb))) /
                 2;
         }
-
-        return { pOneUpdatedElo, pTwoUpdatedElo };
+        console.log(
+            `P1 updatedElo: ${pOneUpdatedElo}\nP2 updatedElo: ${pTwoUpdatedElo}`
+        );
+        return [pOneUpdatedElo, pTwoUpdatedElo];
     }
 
     // Ra and Rb are current ELO ratings
     const K = 30;
-    console.log(`Players Current Elo: ${playerOneCurrentElo}`);
+    console.log(`Player One Current Elo: ${playerOneCurrentElo}`);
+    console.log(`Player Two Current Elo: ${playerTwoCurrentElo}`);
     console.log(`Winners Avg Elo: ${winnersAvgElo}`);
     console.log(`Losers Avg Elo: ${losersAvgElo}`);
     console.log(
         `Expected Outcome? ${
-            expectedOutcome == 0 ? "Draw" : expectedOutcome == 1 ? "Yes" : "No"
+            expectedOutcome == 0
+                ? "Draw"
+                : expectedOutcome == 1
+                ? "Yes, the winners were expected to win"
+                : "No, there was an upset! The underdogs won!"
         }`
     );
 
-    let { playerOneUpdatedElo, playerTwoUpdatedElo } = EloRating(
+    const [playerOneUpdatedElo, playerTwoUpdatedElo] = EloRating(
         playerOneCurrentElo,
         playerTwoCurrentElo,
         winnersAvgElo,
@@ -90,9 +97,14 @@ export function versusEloCalculator(
         K,
         expectedOutcome
     );
-
+    console.log(
+        `playerOne updated elo after running EloRating function: ${playerOneUpdatedElo}`
+    );
+    console.log(
+        `playerTwo updated elo after running EloRating function: ${playerTwoUpdatedElo}`
+    );
     // This code is contributed by Vishal Vilas Shinde.
     // got from https://www.geeksforgeeks.org/elo-rating-algorithm/
 
-    return { playerOneUpdatedElo, playerTwoUpdatedElo };
+    return [playerOneUpdatedElo, playerTwoUpdatedElo];
 }
