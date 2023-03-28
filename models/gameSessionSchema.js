@@ -15,8 +15,8 @@ const gameSessionSchema = new mongoose.Schema({
         required: true,
     },
     // not sure how to allow multiple users to win/lose/tie
-    players_won:
-        // link to the User(s) that won to keep track
+    team_one:
+        // link to the User(s) on team one to keep track
         [
             {
                 type: mongoose.Types.ObjectId,
@@ -24,8 +24,8 @@ const gameSessionSchema = new mongoose.Schema({
                 required: false,
             },
         ],
-    players_lost:
-        // link to the User(s) that lost to keep track
+    team_two:
+        // link to the User(s) on team two§ keep track
         [
             {
                 type: mongoose.Types.ObjectId,
@@ -33,17 +33,8 @@ const gameSessionSchema = new mongoose.Schema({
                 required: false,
             },
         ],
-
-    players_tied:
-        // link to the Users that tied to keep track
-        [
-            {
-                type: mongoose.Types.ObjectId,
-                ref: "users_collection",
-                required: false,
-            },
-        ],
-
+    // number representation for the team that won. 0.5 for a tie
+    winning_team: { type: Number, required: false },
     lowest_time_score: { type: Number, required: false },
     highest_time_score: { type: Number, required: false },
     high_score: { type: Number, required: false },

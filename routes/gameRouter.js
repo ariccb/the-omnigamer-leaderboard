@@ -51,7 +51,7 @@ gameRouter.get("/categories/:_id", getGameCategory);
 gameRouter.post("/categories", createNewGameCategoryType);
 
 /** for creating a new game session
- * ie: { game:"chess", players_won: User_id, players_lost: User_id, high_score: 300150 }
+ * ie: { game:"chess", team_one: User_id, players_lost: User_id, high_score: 300150 }
  */
 gameRouter.post("/sessions", addNewGameSession);
 
