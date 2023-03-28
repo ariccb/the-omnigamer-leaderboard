@@ -31,7 +31,7 @@ export function versusEloCalculator(
         // To calculate the Winning Probability
 
         let Pa = Probability(losersAvgElo, winnersAvgElo);
-        console.log(`Probability of the winning team winning: ${Pa}`);
+        console.log(`\nProbability of the winning team winning: ${Pa}\n`);
         // To calculate the Winning
         // Probability of Player B
         let Pb = Probability(winnersAvgElo, losersAvgElo);
@@ -72,10 +72,8 @@ export function versusEloCalculator(
 
     // Ra and Rb are current ELO ratings
     const K = 30;
-    console.log(`Player One Current Elo: ${playerOneCurrentElo}`);
-    console.log(`Player Two Current Elo: ${playerTwoCurrentElo}`);
-    console.log(`Winners Avg Elo: ${winnersAvgElo}`);
-    console.log(`Losers Avg Elo: ${losersAvgElo}`);
+    console.log(`\nWinner(s) Avg Elo: ${winnersAvgElo}`);
+    console.log(`Loser(s) Avg Elo: ${losersAvgElo}`);
     console.log(
         `Expected Outcome? ${
             expectedOutcome == 0

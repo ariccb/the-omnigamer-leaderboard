@@ -35,14 +35,14 @@ export async function versusEloHandler(
         // need to get the GameElo records of each player on the team first, since it's not recommended to have async functions in a ForEach
         winnersEloSum += player.elo_score;
     });
-    console.log(`winnersEloSum: ${winnersEloSum}`);
+    console.log(`Sum of Winning team's Elo Scores: ${winnersEloSum}`);
     const winnersAvgElo = winnersEloSum / winnerIds.length;
-    console.log(`winnersAvgElo: ${winnersAvgElo}`);
+    console.log(`Average of Winning team's Elo Scores: ${winnersAvgElo}\n`);
 
     // if there is a whole team playing, get the elo score of the collective team that lost - otherwise the sum of 1 loser(no team) will be itself
     let losersEloSum = 0;
     const loserElos = await Promise.all(
-        playersWon.map(async (player) => {
+        playersLost.map(async (player) => {
             return await GameElo.findOneAndUpdate(
                 {
                     game: game._id,
@@ -59,9 +59,34 @@ export async function versusEloHandler(
     loserElos.forEach((player) => {
         losersEloSum += player.elo_score;
     });
-    console.log(`losersEloSum: ${losersEloSum}`);
+    console.log(`Sum of Losing team's Elo Scores: ${losersEloSum}`);
     const losersAvgElo = losersEloSum / loserIds.length;
-    console.log(`losersAvgElo: ${losersAvgElo}`);
+    console.log(`Average of Losing team's Elo Scores: ${losersAvgElo}\n`);
+
+    let drawersEloSum = 0;
+    const drawersElos = await Promise.all(
+        playersLost.map(async (player) => {
+            return await GameElo.findOneAndUpdate(
+                {
+                    game: game._id,
+                    player: player._id,
+                },
+                {
+                    game: game._id,
+                    player: player._id,
+                },
+                { upsert: true, new: true }
+            );
+        })
+    );
+    drawersElos.forEach((player) => {
+        drawersEloSum += player.elo_score;
+    });
+
+    // this isn't going to work because it's putting ALL of the tied players on the same side of the calculation.
+    console.log(`drawersEloSum: ${drawersEloSum}`);
+    const drawersAvgElo = drawersEloSum / drawerIds.length;
+    console.log(`drawersAvgElo: ${drawersAvgElo}\n`);
 
     // this is another way of writing the forEach((player) => {losersEloSum += player.elo_score}) part:
     // let x = playersWon.reduce(((sumSoFar, player ) => {return player.elo_score + sumSoFar} ),0)
@@ -79,10 +104,11 @@ export async function versusEloHandler(
     }
 
     console.log(
-        `\nexpectedOutcome: ${expectedOutcome}\n(1 when the higher-elo team won, 0 when the higher-elo team lost, 0.5 for a tie)`
+        `\nExpected Outcome: ${expectedOutcome}\n- 1 when the higher-elo team won;\n- 0 when the higher-elo team lost;\n- 0.5 for a tie`
     );
     let winnerUpdateResult;
     let loserUpdateResult;
+
     if (expectedOutcome === 1) {
         // when the higher elo team wins
         // calculate what the elo scores should be updated to for each winner -- then do losers below
@@ -134,7 +160,9 @@ export async function versusEloHandler(
                 `${loserCurrentElo.player.username}'s Current Elo Score for ${game.name}': ${loserCurrentEloScore}`
             );
             // put this inside a loop
-            console.log("------Just before running versusEloCalculator------");
+            console.log(
+                "\n------Just before running versusEloCalculator------"
+            );
             const [playerOneUpdatedElo, playerTwoUpdatedElo] =
                 versusEloCalculator(
                     winnerCurrentEloScore,

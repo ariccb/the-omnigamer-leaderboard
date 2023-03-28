@@ -7,7 +7,6 @@ import GameElo from "../models/gameEloSchema.js";
 import { versusEloHandler } from "./scoring-type-handlers/versusHandler.js";
 
 export const addNewGameSession = async (req, res) => {
-    console.log("Attempting to add new game session");
     const {
         game_id,
         players_won,
@@ -27,11 +26,13 @@ export const addNewGameSession = async (req, res) => {
 
         console.log(`Game Played: ${game.name}`);
         const scoringType = game.scoring_type;
-        console.log(`Scoring_type: ${scoringType}`);
+        console.log(`Scoring_type: ${scoringType}\n`);
 
         console.log(`Winners: ${playersWon.map((player) => player.username)}`);
         console.log(`Losers: ${playersLost.map((player) => player.username)}`);
-        console.log(`Drawers: ${playersTied.map((player) => player.username)}`);
+        console.log(
+            `Drawers: ${playersTied.map((player) => player.username)}\n`
+        );
         const newGameSession = await GameSession.create({
             game: game._id,
             date_recorded: new Date().toISOString(),

@@ -46,8 +46,8 @@ app.use("/seed", seedRouter);
 
 //port the server is listening on
 app.listen(PORT, () => {
-    console.log(`The server is up and running on PORT: ${PORT}\n`);
+    console.log(`The server is up and running on PORT: ${PORT}`);
     console.log(
-        `Click here to view the main endpoint: http://localhost:${PORT}`
+        `Click here to view the main endpoint: http://localhost:${PORT}\n`
     );
 });
