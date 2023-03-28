@@ -21,14 +21,6 @@ seedRouter.get("/users", async (req, res) => {
             email: "zacksemail@gmail.com",
             created_at: new Date().toISOString(),
         },
-
-        {
-            first_name: "Kennan",
-            last_name: "Bouwers",
-            username: "autieKK",
-            email: "kennan@gmail.com",
-            created_at: new Date().toISOString(),
-        },
         {
             first_name: "Aric",
             last_name: "Crosson Bouwers",
@@ -55,6 +47,34 @@ seedRouter.get("/users", async (req, res) => {
             last_name: "Pitchford",
             username: "TheEnforcer",
             email: "lukesemail@gmail.com",
+            created_at: new Date().toISOString(),
+        },
+        {
+            first_name: "Renata",
+            last_name: "Vieiras",
+            username: "Renatatat",
+            email: "renatasemail@gmail.com",
+            created_at: new Date().toISOString(),
+        },
+        {
+            first_name: "Youseff",
+            last_name: "Triki",
+            username: "TrikiRicki",
+            email: "youaretheseff@gmail.com",
+            created_at: new Date().toISOString(),
+        },
+        {
+            first_name: "Rini",
+            last_name: "Joy",
+            username: "OhJoy",
+            email: "joyrini@gmail.com",
+            created_at: new Date().toISOString(),
+        },
+        {
+            first_name: "Jerald",
+            last_name: "Wilks",
+            username: "justwatchme",
+            email: "jeraldwilkins@gmail.com",
             created_at: new Date().toISOString(),
         },
     ];

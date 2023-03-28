@@ -13,9 +13,6 @@ export async function versusEloHandler(
     const drawerIds = playersTied.map((player) => player._id); // players_tied will be an array of _id's
     //do a specific ELO calculation if the game type is a 1v1 situation
 
-    console.log(
-        `winnerIds:${winnerIds}, loserIds:${loserIds}, drawerIds:${drawerIds}`
-    );
     // if there is a whole team playing, get the elo score of the collective team that won - otherwise the sum of 1 winner(no team) will be itself
     let winnersEloSum = 0;
     const winnerElos = await Promise.all(
@@ -34,7 +31,6 @@ export async function versusEloHandler(
             );
         })
     );
-    console.log(winnerElos);
     winnerElos.forEach((player) => {
         // need to get the GameElo records of each player on the team first, since it's not recommended to have async functions in a ForEach
         winnersEloSum += player.elo_score;
@@ -60,7 +56,6 @@ export async function versusEloHandler(
             );
         })
     );
-    console.log(loserElos);
     loserElos.forEach((player) => {
         losersEloSum += player.elo_score;
     });
@@ -84,38 +79,54 @@ export async function versusEloHandler(
     }
 
     console.log(
-        `expectedOutcome: ${expectedOutcome}\n(1 when the higher-elo team won, 0 when the higher-elo team lost, 0.5 for a tie)`
+        `\nexpectedOutcome: ${expectedOutcome}\n(1 when the higher-elo team won, 0 when the higher-elo team lost, 0.5 for a tie)`
     );
     let winnerUpdateResult;
     let loserUpdateResult;
     if (expectedOutcome === 1) {
-        console.log(
-            "trying expected outcome of 1, next is trying to get the current Elo doc of the players."
-        );
         // when the higher elo team wins
         // calculate what the elo scores should be updated to for each winner -- then do losers below
         // do one user's elo calculation at a time
         // .... what do I do if it doesn't find one?
+
         winnerIds.forEach(async (winner, index) => {
-            let winnerCurrentElo = await GameElo.findOne({
-                game: game._id,
-                player: winner._id,
-            }).populate("player", "name");
+            let winnerCurrentElo = await GameElo.findOneAndUpdate(
+                {
+                    game: game._id,
+                    player: winner._id,
+                },
+                {
+                    game: game._id,
+                    player: winner._id,
+                },
+                { upsert: true, new: true }
+            ).populate("player", "username");
             console.log(
                 `\n${index} time through... winnerCurrentElo: ${winnerCurrentElo}`
             );
 
-            let loserCurrentElo = await GameElo.findOne({
-                game: game._id,
-                player: loserIds[index]._id,
-            }).populate("player", "name");
+            let loserCurrentElo = await GameElo.findOneAndUpdate(
+                {
+                    game: game._id,
+                    player: loserIds[index]._id,
+                },
+                {
+                    game: game._id,
+                    player: loserIds[index]._id,
+                },
+                { upsert: true, new: true }
+            ).populate("player", "username");
             console.log(
                 `\n${index} time through... loserCurrentElo: ${loserCurrentElo}`
             );
             let winnerCurrentEloScore = winnerCurrentElo.elo_score;
             let loserCurrentEloScore = loserCurrentElo.elo_score;
-            console.log(`Winner current Elo Score: ${winnerCurrentEloScore}`);
-            console.log(`Loser current Elo Score: ${loserCurrentEloScore}`);
+            console.log(
+                `${winnerCurrentElo.player.username}'s Current Elo Score for ${game.name}': ${winnerCurrentEloScore}`
+            );
+            console.log(
+                `${loserCurrentElo.player.username}'s Current Elo Score for ${game.name}': ${loserCurrentEloScore}`
+            );
             // put this inside a loop
             console.log("------Just before running versusEloCalculator------");
             const [playerOneUpdatedElo, playerTwoUpdatedElo] =
@@ -127,9 +138,12 @@ export async function versusEloHandler(
                     expectedOutcome
                 );
             console.log("------Just after running versusEloCalculator------");
-            console.log(`playerOneUpdatedElo: ${playerOneUpdatedElo}`);
-            console.log(`playerTwoUpdatedElo: ${playerTwoUpdatedElo}`);
-
+            console.log(
+                `${winnerCurrentElo.player.username}'s Updated Elo Score for ${game.name}': ${playerOneUpdatedElo}`
+            );
+            console.log(
+                `${loserCurrentElo.player.username}'s Updated Elo Score for ${game.name}': ${playerTwoUpdatedElo}`
+            );
             // using the values we just calculated // one at a time
             console.log(
                 `Trying to update the record of the winner with the new Elo Score.`
@@ -149,6 +163,9 @@ export async function versusEloHandler(
                 .populate("game", "name")
                 .populate("player", "first_name last_name username");
 
+            console.log(
+                `Trying to update the record of the loser with the new Elo Score.`
+            );
             loserUpdateResult = await GameElo.findOneAndUpdate(
                 {
                     game: game._id,
@@ -164,7 +181,7 @@ export async function versusEloHandler(
                 .populate("game", "name")
                 .populate("player", "first_name last_name username");
         });
-        return { winnerUpdateResult, loserUpdateResult };
+        console.log(winnerUpdateResult, loserUpdateResult);
     } else if (expectedOutcome === 0) {
         console.log("need to do logic for expectedOutcome === 0 still");
     } else if (expectedOutcome === 0.5) {

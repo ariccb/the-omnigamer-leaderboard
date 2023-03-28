@@ -24,10 +24,14 @@ export const addNewGameSession = async (req, res) => {
         const playersWon = await User.find({ _id: players_won });
         const playersLost = await User.find({ _id: players_lost });
         const playersTied = await User.find({ _id: players_tied });
-        console.log(`gameObj: ${game}`);
-        console.log(`playersWonObj: ${playersWon}`);
-        console.log(`playersLostObj: ${playersLost}`);
-        console.log(`playersTiedOjb: ${playersTied}`);
+
+        console.log(`Game Played: ${game.name}`);
+        const scoringType = game.scoring_type;
+        console.log(`Scoring_type: ${scoringType}`);
+
+        console.log(`Winners: ${playersWon.map((player) => player.username)}`);
+        console.log(`Losers: ${playersLost.map((player) => player.username)}`);
+        console.log(`Drawers: ${playersTied.map((player) => player.username)}`);
         const newGameSession = await GameSession.create({
             game: game._id,
             date_recorded: new Date().toISOString(),
@@ -41,8 +45,6 @@ export const addNewGameSession = async (req, res) => {
         });
         // do processing for collecting, and then calculating user's elo scores based
         // on game_id ("and scoring type") here.
-        const scoringType = game.scoring_type;
-        console.log(`Scoring_type: ${scoringType}`);
 
         let eloResult;
         if (scoringType === "versus") {

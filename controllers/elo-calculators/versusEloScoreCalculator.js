@@ -67,9 +67,6 @@ export function versusEloCalculator(
                     (pTwoCurrentElo + K * (1 - Pb))) /
                 2;
         }
-        console.log(
-            `P1 updatedElo: ${pOneUpdatedElo}\nP2 updatedElo: ${pTwoUpdatedElo}`
-        );
         return [pOneUpdatedElo, pTwoUpdatedElo];
     }
 
@@ -96,12 +93,6 @@ export function versusEloCalculator(
         losersAvgElo,
         K,
         expectedOutcome
-    );
-    console.log(
-        `playerOne updated elo after running EloRating function: ${playerOneUpdatedElo}`
-    );
-    console.log(
-        `playerTwo updated elo after running EloRating function: ${playerTwoUpdatedElo}`
     );
     // This code is contributed by Vishal Vilas Shinde.
     // got from https://www.geeksforgeeks.org/elo-rating-algorithm/
