@@ -162,7 +162,7 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
             `${teamTwoCurrentElo.player.username}'s Current Elo Score for ${game.name}: ${teamTwoCurrentEloScore}\n`
         );
 
-        const [playerOneUpdatedElo, playerTwoUpdatedElo] = versusEloCalculator(
+        let [playerOneUpdatedElo, playerTwoUpdatedElo] = versusEloCalculator(
             teamOneCurrentEloScore,
             teamTwoCurrentEloScore,
             teamOneAvgElo,
@@ -170,6 +170,11 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
             expectedOutcome,
             winningTeam
         );
+        console.log(playerOneUpdatedElo, playerTwoUpdatedElo);
+        // // round
+        playerOneUpdatedElo = Math.round(playerOneUpdatedElo + Number.EPSILON);
+        playerTwoUpdatedElo = Math.round(playerTwoUpdatedElo + Number.EPSILON);
+        console.log(playerOneUpdatedElo, playerTwoUpdatedElo);
 
         // conditional is for not showing Team One: or Team Two: prefix when there's only one player on each team
         teamOneElos.length > 1 ? console.log("Team One:") : console.log("");

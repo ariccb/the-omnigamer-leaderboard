@@ -37,6 +37,8 @@ export async function getGameLeaderboard(req, res) {
 }
 
 export async function getCategoryLeaderboard(req, res) {
+    // need to collect all games for the chosen category, THEN group the Elo records by user, and
+    // calculate the avg elo per category for each user
     try {
         const { _id } = req.params;
         const gameDocs = await GameElo.find({})

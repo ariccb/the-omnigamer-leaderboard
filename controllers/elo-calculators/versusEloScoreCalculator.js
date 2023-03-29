@@ -12,8 +12,7 @@ export function versusEloCalculator(
     // Function to calculate the Probability
     function Probability(rating1, rating2) {
         return (
-            (1.0 * 1.0) /
-            (1 + 1.0 * Math.pow(10, (1.0 * (rating1 - rating2)) / 480)) // using 480 instead of 400 due to this link https://en.wikipedia.org/wiki/Elo_rating_system#:~:text=Suggested%20modification
+            (1.0 * 1.0) / (1 + 1.0 * Math.pow(10, (1.0 * (rating1 - rating2)) / 480)) // using 480 instead of 400 due to this link https://en.wikipedia.org/wiki/Elo_rating_system#:~:text=Suggested%20modification
         );
     }
 
@@ -65,14 +64,12 @@ export function versusEloCalculator(
         // Case 3 When team one wins and wasn't expected to
         // Updating the Elo Ratings
         if (expectedOutcome === false && winningTeam === 1) {
-            K = K + 10; // larger constant for bigger reward/penalty for unexpected win/loss
             teamOnePlayerUpdatedElo = teamOnePlayerCurrentElo + K * (1 - Pa);
             teamTwoPlayerUpdatedElo = teamTwoPlayerCurrentElo + K * (0 - Pb);
         }
         // Case 4 When expected outcome DOESN'T come true (meaning the lower score player or team won)
         // Updating the Elo Ratings
         else if (expectedOutcome === false && winningTeam === 2) {
-            K = K + 10; // larger constant for bigger reward/penalty for unexpected win/loss
             teamOnePlayerUpdatedElo = teamOnePlayerCurrentElo + K * (0 - Pa);
             teamTwoPlayerUpdatedElo = teamTwoPlayerCurrentElo + K * (1 - Pb);
         }
@@ -82,7 +79,6 @@ export function versusEloCalculator(
         // etc. if I want to reward/penalize draws differently depending on win expectations.
         else if (winningTeam === 0.5) {
             // handles all cases where there are ties
-            K = K - 5; // less impact on score if there is a tie
             // treat it as if both outcomes took place, and make the result each half added together - this will affect high elo players drawing with low elo players
             teamOnePlayerUpdatedElo =
                 (teamOnePlayerCurrentElo +
@@ -100,7 +96,7 @@ export function versusEloCalculator(
     }
 
     // Ra and Rb are current ELO ratings
-    const standardK = 25; // change this to change how much overall the values change when you win/lose
+    const standardK = 30; // change this to change how much overall the values change when you win/lose
 
     const [playerOneUpdatedElo, playerTwoUpdatedElo] = EloRating(
         playerOneCurrentElo,
