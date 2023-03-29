@@ -45,14 +45,14 @@ export const addNewGameSession = async (req, res) => {
         // do processing for collecting, and then calculating user's elo scores based
         // on game_id ("and scoring type") here.
 
-        let eloResult;
         if (scoringType === "versus") {
-            eloResult = versusEloHandler(
+            let eloResult = await versusEloHandler(
                 game,
                 teamOne,
                 teamTwo,
                 winning_team //1 if team 1 won, 2 if team 2 won, 0.5 if it's a tie
             );
+
             //idea -- could do a number-based winner method for larger teams. 1/n of players + n of players.
             // the fraction would indicate which team one, for example in a 4 player game if team 1 won, it would be 4.25(4-1/4)
             // in a 6 player game, and the 4th team won, it would be 6.666667 (6-4/6)
@@ -60,11 +60,9 @@ export const addNewGameSession = async (req, res) => {
         // if (scoringType === "high-score") { //for single-player highscore-type games, only playersWon is used
         //     versusEloHandler(gameObj, playersWon);
         // }
-
         res.status(201).json({
             message: `Successfully created new session record:`,
             newSession: newGameSession,
-            eloResult: eloResult,
         });
     } catch (error) {
         console.log(error);

@@ -36,20 +36,21 @@ export function versusEloCalculator(
 
         let Pa = Probability(teamTwoAvgElo, teamOneAvgElo);
         let PaPerc = Math.round((100 - Pa * 100) * 100) / 100;
-        console.log(`\nProbability of the Team 2 winning: ${PaPerc}%\n`);
         // To calculate the Winning
         // Probability of Player B
         let Pb = Probability(teamOneAvgElo, teamTwoAvgElo);
         let PbPerc = Math.round((100 - Pb * 100) * 100) / 100;
 
-        console.log(`\nProbability of the Team 1 winning: ${PbPerc}%\n`);
+        console.log(
+            `Probability of the Team 1 winning: ${PbPerc}%\nProbability of the Team 2 winning: ${PaPerc}%\n`
+        );
+
         let teamOnePlayerUpdatedElo;
         let teamTwoPlayerUpdatedElo;
 
         // Case 1 When team one wins and was expected to
         // Updating the Elo Ratings
         if (expectedOutcome === true && winningTeam === 1) {
-            console.log("Case 1: Team One Wins, Expectedly");
             teamOnePlayerUpdatedElo = teamOnePlayerCurrentElo + K * (1 - Pa);
             teamTwoPlayerUpdatedElo = teamTwoPlayerCurrentElo + K * (0 - Pb);
         }
@@ -57,7 +58,6 @@ export function versusEloCalculator(
         // Case 2 When expected outcome DOESN'T come true (meaning the lower score player or team won)
         // Updating the Elo Ratings
         else if (expectedOutcome === true && winningTeam === 2) {
-            console.log("Case 2: Team Two Wins, Expectedly");
             teamOnePlayerUpdatedElo = teamOnePlayerCurrentElo + K * (0 - Pa);
             teamTwoPlayerUpdatedElo = teamTwoPlayerCurrentElo + K * (1 - Pb);
         }
@@ -65,9 +65,6 @@ export function versusEloCalculator(
         // Case 3 When team one wins and wasn't expected to
         // Updating the Elo Ratings
         if (expectedOutcome === false && winningTeam === 1) {
-            console.log(
-                "Case 3: Team One Wins, Unexpectedly. Go underdogs go!"
-            );
             K = K + 10; // larger constant for bigger reward/penalty for unexpected win/loss
             teamOnePlayerUpdatedElo = teamOnePlayerCurrentElo + K * (1 - Pa);
             teamTwoPlayerUpdatedElo = teamTwoPlayerCurrentElo + K * (0 - Pb);
@@ -75,9 +72,6 @@ export function versusEloCalculator(
         // Case 4 When expected outcome DOESN'T come true (meaning the lower score player or team won)
         // Updating the Elo Ratings
         else if (expectedOutcome === false && winningTeam === 2) {
-            console.log(
-                "Case 4: Team Two Wins, Unexpectedly. Go underdogs go!"
-            );
             K = K + 10; // larger constant for bigger reward/penalty for unexpected win/loss
             teamOnePlayerUpdatedElo = teamOnePlayerCurrentElo + K * (0 - Pa);
             teamTwoPlayerUpdatedElo = teamTwoPlayerCurrentElo + K * (1 - Pb);
@@ -102,15 +96,11 @@ export function versusEloCalculator(
                     (teamTwoPlayerCurrentElo + K * (1 - Pb))) /
                 2;
         }
-        console.log(teamOnePlayerUpdatedElo, teamTwoPlayerUpdatedElo);
         return [teamOnePlayerUpdatedElo, teamTwoPlayerUpdatedElo];
     }
 
     // Ra and Rb are current ELO ratings
     const standardK = 25; // change this to change how much overall the values change when you win/lose
-
-    console.log(`\Team One(s) Avg Elo: ${teamOneAvgElo}`);
-    console.log(`Team Two(s) Avg Elo: ${teamTwoAvgElo}`);
 
     const [playerOneUpdatedElo, playerTwoUpdatedElo] = EloRating(
         playerOneCurrentElo,
@@ -121,8 +111,9 @@ export function versusEloCalculator(
         expectedOutcome,
         winningTeam
     );
-    // This code is contributed by Vishal Vilas Shinde.
-    // got from https://www.geeksforgeeks.org/elo-rating-algorithm/
-    console.log(playerOneUpdatedElo, playerOneUpdatedElo);
+
     return [playerOneUpdatedElo, playerTwoUpdatedElo];
 }
+
+// This code is contributed by Vishal Vilas Shinde.
+// got from https://www.geeksforgeeks.org/elo-rating-algorithm/

@@ -30,9 +30,6 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
         // need to get the GameElo records of each player on the team first, since it's not recommended to have async functions in a ForEach
         teamOneEloSum += player.elo_score;
     });
-    console.log(`Sum of Team One's Elo Scores: ${teamOneEloSum}`);
-    const teamOneAvgElo = teamOneEloSum / teamOneIds.length;
-    console.log(`Average of Team One's Elo Scores: ${teamOneAvgElo}\n`);
 
     // if there is a whole team playing, get the elo score of the collective team that lost - otherwise the sum of 1 loser(no team) will be itself
     let teamTwoEloSum = 0;
@@ -54,9 +51,15 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
     teamTwoElos.forEach((player) => {
         teamTwoEloSum += player.elo_score;
     });
-    console.log(`Sum of Team Two's Elo Scores: ${teamTwoEloSum}`);
+
+    console.log(
+        `\nSum of Team One's Elo Scores: ${teamOneEloSum}\nSum of Team Two's Elo Scores: ${teamTwoEloSum}\n`
+    );
+    const teamOneAvgElo = teamOneEloSum / teamOneIds.length;
     const teamTwoAvgElo = teamTwoEloSum / teamTwoIds.length;
-    console.log(`Average of Team Two's Elo Scores: ${teamTwoAvgElo}\n`);
+    console.log(
+        `Average of Team One's Elo Scores: ${teamOneAvgElo}\nAverage of Team Two's Elo Scores: ${teamTwoAvgElo}\n`
+    );
 
     // this is another way of writing the forEach((player) => {losersEloSum += player.elo_score}) part:
     // let x = playersWon.reduce(((sumSoFar, player ) => {return player.elo_score + sumSoFar} ),0)
@@ -94,22 +97,6 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
     ) {
         expectedOutcome = false; // then the expected outcome is false; expectedOutcome = 0
     }
-
-    console.log(`\nWho Won?`);
-    if (winningTeam === 1) {
-        console.log(
-            `Team One Won! Congrats ${teamOne.map((player) => player.username)}`
-        );
-    } else if (winningTeam === 2) {
-        console.log(
-            `Team Two Won! Congrats ${teamTwo.map((player) => player.username)}`
-        );
-    } else if (winningTeam === 0.5) {
-        console.log(`There was a draw!`);
-    }
-    // console.log(
-    //     `\nExpected Outcome: ${expectedOutcome}\nLEGEND:\n- 1 when the higher-elo team won;\n- 0 when the higher-elo team lost;\n- 0.5 for a tie`
-    // );
 
     let winnerUpdateResult;
     let loserUpdateResult;
@@ -149,6 +136,10 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
         })
     );
     for (let i = 0; i < teamOneIds.length; i++) {
+        // let times = i + 1;
+        // console.log(
+        //     `${times} time through, calculating each player's Elo Scores`
+        // );
         // getting the individual GameElo record for winner and loser for each loop:
 
         let teamOneCurrentElo = teamOneCurrentElos[i];
@@ -157,14 +148,13 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
         // getting the current elo scores for the game before calculating updated elo values
         let teamOneCurrentEloScore = teamOneCurrentElo.elo_score;
         let teamTwoCurrentEloScore = teamTwoCurrentElo.elo_score;
+        console.log("------");
+
         console.log(
-            `${teamOneCurrentElo.player.username}'s Current Elo Score for ${game.name}': ${teamOneCurrentEloScore}`
+            `Team One: ${teamOneCurrentElo.player.username}'s Current Elo Score for ${game.name}': ${teamOneCurrentEloScore}`
         );
         console.log(
-            `${teamTwoCurrentElo.player.username}'s Current Elo Score for ${game.name}': ${teamTwoCurrentEloScore}`
-        );
-        console.log(
-            `\n------Just before running versusEloCalculator------\nIndex: ${i}`
+            `Team Two: ${teamTwoCurrentElo.player.username}'s Current Elo Score for ${game.name}': ${teamTwoCurrentEloScore}\n`
         );
 
         const [playerOneUpdatedElo, playerTwoUpdatedElo] = versusEloCalculator(
@@ -175,13 +165,14 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
             expectedOutcome,
             winningTeam
         );
-        console.log("------Just after running versusEloCalculator------");
         console.log(
             `${teamOneCurrentElo.player.username}'s Updated Elo Score for ${game.name}: ${playerOneUpdatedElo}`
         );
         console.log(
-            `${teamTwoCurrentElo.player.username}'s Updated Elo Score for ${game.name}: ${playerTwoUpdatedElo}`
+            `${teamTwoCurrentElo.player.username}'s Updated Elo Score for ${game.name}: ${playerTwoUpdatedElo}\n`
         );
+        console.log("------");
+
         // using the values we just calculated // one at a time
         winnerUpdateResult = await GameElo.findOneAndUpdate(
             {
@@ -211,5 +202,32 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
         )
             .populate("game", "name")
             .populate("player", "first_name last_name username");
+    }
+
+    // display outcomes
+    if (expectedOutcome === true && winningTeam === 1) {
+        console.log("------------------------------------------");
+        console.log("Team One Wins, expectedly");
+        console.log(`Congrats ${teamOne.map((player) => player.username)}!!!`);
+        console.log("------------------------------------------");
+    } else if (expectedOutcome === true && winningTeam === 2) {
+        console.log("------------------------------------------");
+        console.log("Team Two Wins, expectedly");
+        console.log(`Congrats ${teamTwo.map((player) => player.username)}!!!`);
+        console.log("------------------------------------------");
+    } else if (expectedOutcome === false && winningTeam === 1) {
+        console.log("------------------------------------------");
+        console.log("Team One Wins, unexpectedly. Go underdogs go!");
+        console.log(`Congrats ${teamOne.map((player) => player.username)}!!!`);
+        console.log("------------------------------------------");
+    } else if (expectedOutcome === false && winningTeam === 2) {
+        console.log("------------------------------------------");
+        console.log("Team Two Wins, unexpectedly. Go underdogs go!");
+        console.log(`Congrats ${teamTwo.map((player) => player.username)}!!!`);
+        console.log("------------------------------------------");
+    } else if (winningTeam === 0.5) {
+        console.log("------------------------------------------");
+        console.log(`There was a draw! Good Game!`);
+        console.log("------------------------------------------");
     }
 }

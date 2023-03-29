@@ -34,7 +34,16 @@ const gameSessionSchema = new mongoose.Schema({
             },
         ],
     // number representation for the team that won. 0.5 for a tie
-    winning_team: { type: Number, required: false },
+    winning_team: {
+        type: Number,
+        required: false,
+        enum: [
+            // lets you have pre-determined options
+            1, // team_one is the winner
+            2, // team_two is the winner
+            0.5, // there was a tie
+        ],
+    },
     lowest_time_score: { type: Number, required: false },
     highest_time_score: { type: Number, required: false },
     high_score: { type: Number, required: false },
