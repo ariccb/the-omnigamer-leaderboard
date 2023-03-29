@@ -1,14 +1,13 @@
 import express from "express";
-// import {
-//     getOverallLeaderboard,
-//     getCategoryLeaderboard,
-//     getGameLeaderboard,
-// } from "../controllers/leaderboardController.js";
+import {
+    getGameLeaderboard,
+    getCategoryLeaderboard,
+} from "../controllers/leaderboardController.js";
 
 const leaderboardRouter = express.Router();
 
-// gameRouter.get("/", getOverallLeaderboard); // get the overall leaderboard
-// gameRouter.get("/category/:_id", getCategoryLeaderboard);
-// gameRouter.get("/game/:_id", getGameLeaderboard);
+// leaderboardRouter.get("/", getOverallLeaderboard); // get the overall leaderboard
+leaderboardRouter.get("/category/:_id", getCategoryLeaderboard);
+leaderboardRouter.get("/game/:_id", getGameLeaderboard);
 
 export default leaderboardRouter;

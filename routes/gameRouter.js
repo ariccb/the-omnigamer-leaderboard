@@ -31,6 +31,7 @@ import {
     createNewGameCategoryType,
 } from "../controllers/gameCategoryController.js";
 import { addNewGameSession } from "../controllers/gameSessionController.js";
+import { deleteGameEloRecord } from "../controllers/gameEloController.js";
 
 const gameRouter = express.Router();
 
@@ -54,6 +55,8 @@ gameRouter.post("/categories", createNewGameCategoryType);
  * ie: { game:"chess", team_one: User_id, players_lost: User_id, high_score: 300150 }
  */
 gameRouter.post("/sessions", addNewGameSession);
+
+gameRouter.delete("/elo/:_id", deleteGameEloRecord); // update an existing game type
 
 // for getting game sessions
 // gameRouter.get("/sessions", getOverallSessionHistory); // get all sessions from all categories

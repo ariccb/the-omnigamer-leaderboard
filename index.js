@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import userRouter from "./routes/userRouter.js";
 import gameRouter from "./routes/gameRouter.js";
 import seedRouter from "./routes/seedRouter.js";
-// import leaderboardRouter from "./routes/leaderboards.js";
+import leaderboardRouter from "./routes/leaderboardRouter.js";
 // import gameSessionRouter from "./routes/gameSessionRouter.js";
 
 //read the MongoDB credentials from .env file
@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
 app.use("/users", userRouter); // all the functionality to do with users
 app.use("/game-data", gameRouter);
 app.use("/seed", seedRouter);
-// app.use("/leaderboards", leaderboardRouter);
+app.use("/leaderboards", leaderboardRouter);
 // app.use("/game/sessions", gameSessionRouter);
 
 //port the server is listening on

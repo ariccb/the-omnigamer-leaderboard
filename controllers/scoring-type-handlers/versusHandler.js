@@ -52,14 +52,16 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
         teamTwoEloSum += player.elo_score;
     });
 
-    console.log(
-        `\nSum of Team One's Elo Scores: ${teamOneEloSum}\nSum of Team Two's Elo Scores: ${teamTwoEloSum}\n`
-    );
     const teamOneAvgElo = teamOneEloSum / teamOneIds.length;
     const teamTwoAvgElo = teamTwoEloSum / teamTwoIds.length;
-    console.log(
-        `Average of Team One's Elo Scores: ${teamOneAvgElo}\nAverage of Team Two's Elo Scores: ${teamTwoAvgElo}\n`
-    );
+    if (teamOneElos.length > 1) {
+        console.log(
+            `\nSum of Team One's Elo Scores: ${teamOneEloSum}\nSum of Team Two's Elo Scores: ${teamTwoEloSum}\n`
+        );
+        console.log(
+            `Average of Team One's Elo Scores: ${teamOneAvgElo}\nAverage of Team Two's Elo Scores: ${teamTwoAvgElo}\n`
+        );
+    }
 
     // this is another way of writing the forEach((player) => {losersEloSum += player.elo_score}) part:
     // let x = playersWon.reduce(((sumSoFar, player ) => {return player.elo_score + sumSoFar} ),0)
@@ -150,11 +152,14 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
         let teamTwoCurrentEloScore = teamTwoCurrentElo.elo_score;
         console.log("------");
 
+        // conditional is for not showing Team One: or Team Two: prefix when there's only one player on each team
+        teamOneElos.length > 1 ? console.log("Team One:") : console.log("");
         console.log(
-            `Team One: ${teamOneCurrentElo.player.username}'s Current Elo Score for ${game.name}': ${teamOneCurrentEloScore}`
+            `${teamOneCurrentElo.player.username}'s Current Elo Score for ${game.name}: ${teamOneCurrentEloScore}`
         );
+        teamOneElos.length > 1 ? console.log("Team Two:") : console.log("");
         console.log(
-            `Team Two: ${teamTwoCurrentElo.player.username}'s Current Elo Score for ${game.name}': ${teamTwoCurrentEloScore}\n`
+            `${teamTwoCurrentElo.player.username}'s Current Elo Score for ${game.name}: ${teamTwoCurrentEloScore}\n`
         );
 
         const [playerOneUpdatedElo, playerTwoUpdatedElo] = versusEloCalculator(
@@ -165,13 +170,16 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
             expectedOutcome,
             winningTeam
         );
+
+        // conditional is for not showing Team One: or Team Two: prefix when there's only one player on each team
+        teamOneElos.length > 1 ? console.log("Team One:") : console.log("");
         console.log(
             `${teamOneCurrentElo.player.username}'s Updated Elo Score for ${game.name}: ${playerOneUpdatedElo}`
         );
+        teamOneElos.length > 1 ? console.log("Team Two:") : console.log("");
         console.log(
             `${teamTwoCurrentElo.player.username}'s Updated Elo Score for ${game.name}: ${playerTwoUpdatedElo}\n`
         );
-        console.log("------");
 
         // using the values we just calculated // one at a time
         winnerUpdateResult = await GameElo.findOneAndUpdate(
