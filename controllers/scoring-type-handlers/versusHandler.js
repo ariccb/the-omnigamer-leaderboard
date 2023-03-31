@@ -54,7 +54,7 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
 
     const teamOneAvgElo = teamOneEloSum / teamOneIds.length;
     const teamTwoAvgElo = teamTwoEloSum / teamTwoIds.length;
-    if (teamOneElos.length > 1) {
+    if (teamOneElos.length > 1 || teamTwoElos.length > 1) {
         console.log(
             `\nSum of Team One's Elo Scores: ${teamOneEloSum}\nSum of Team Two's Elo Scores: ${teamTwoEloSum}\n`
         );
@@ -137,13 +137,33 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
             ).populate("player", "username");
         })
     );
+    /** //-- idea -- in progress. Add functionality for mis-matched teams(one being larger than the other)
+    // get length team two minus length team 1, to know if you need to assign a "dummy" input equal to the avg elo of the team
+    // (for each team member the teams are imbalanced by) for the elo_calculator,
+    // so that the team with less players doesn't get their elo score updated multiple times.
+    let dummyPlayerScore;
+    const teamOnelength = teamOneElos.length;
+    const teamTwolength = teamTwoElos.length;
+    let teamDifference = teamOnelength - teamTwolength;
+    console.log(teamDifference);
+    if (teamOneCurrentElos.length > teamTwoCurrentElos.length) {
+        console.log(`Team 1 has ${teamDifference} less player`);
+        dummyPlayerScore = teamOneAvgElo;
+    }
+    if (teamOneCurrentElos.length < teamTwoCurrentElos.length) {
+        console.log(`Team 1 has ${teamDifference} less player`);
+    }
+    console.log(
+        `viewing current elo docs for mismatched team: Team 1:${teamOneCurrentElos}\nTeam 2:${teamTwoCurrentElos}`
+     );
+    **/
     for (let i = 0; i < teamOneIds.length; i++) {
         // let times = i + 1;
         // console.log(
         //     `${times} time through, calculating each player's Elo Scores`
         // );
-        // getting the individual GameElo record for winner and loser for each loop:
 
+        // getting the individual GameElo record for winner and loser for each loop:
         let teamOneCurrentElo = teamOneCurrentElos[i];
         let teamTwoCurrentElo = teamTwoCurrentElos[i];
 
@@ -152,12 +172,12 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
         let teamTwoCurrentEloScore = teamTwoCurrentElo.elo_score;
         console.log("------");
 
-        // conditional is for not showing Team One: or Team Two: prefix when there's only one player on each team
+        // conditional is: if there is only one person on a team, don't show this stuff
         teamOneElos.length > 1 ? console.log("Team One:") : console.log("");
         console.log(
             `${teamOneCurrentElo.player.username}'s Current Elo Score for ${game.name}: ${teamOneCurrentEloScore}`
         );
-        teamOneElos.length > 1 ? console.log("Team Two:") : console.log("");
+        teamTwoElos.length > 1 ? console.log("Team Two:") : console.log("");
         console.log(
             `${teamTwoCurrentElo.player.username}'s Current Elo Score for ${game.name}: ${teamTwoCurrentEloScore}\n`
         );
@@ -170,11 +190,11 @@ export async function versusEloHandler(game, teamOne, teamTwo, winningTeam) {
             expectedOutcome,
             winningTeam
         );
-        console.log(playerOneUpdatedElo, playerTwoUpdatedElo);
+        // console.log(playerOneUpdatedElo, playerTwoUpdatedElo);
         // // round
         playerOneUpdatedElo = Math.round(playerOneUpdatedElo + Number.EPSILON);
         playerTwoUpdatedElo = Math.round(playerTwoUpdatedElo + Number.EPSILON);
-        console.log(playerOneUpdatedElo, playerTwoUpdatedElo);
+        // console.log(playerOneUpdatedElo, playerTwoUpdatedElo);
 
         // conditional is for not showing Team One: or Team Two: prefix when there's only one player on each team
         teamOneElos.length > 1 ? console.log("Team One:") : console.log("");

@@ -14,7 +14,6 @@ const gameSessionSchema = new mongoose.Schema({
         ref: "games_collection",
         required: true,
     },
-    // not sure how to allow multiple users to win/lose/tie
     team_one:
         // link to the User(s) on team one to keep track
         [
